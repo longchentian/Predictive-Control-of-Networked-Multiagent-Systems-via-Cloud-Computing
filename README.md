@@ -93,7 +93,7 @@ $$
 \begin{align} x_{i} (t+1)=&A_{i} x_{i} (t)+B_{i} u_{i} (t) \notag \\ y_{i} (t)=&C_{i} x_{i} (t) \end{align}
 $$
 
-∀i ∈ N，其中 $x_i∈R^{n_i}$，$y_i∈l$，$u_i∈m_i$ 分别是第 $i$ 个智能体的状态、输出和输入向量，$A_i∈R^{n_i×n_i}$ ，$B_i ∈R^{n_i×m_i}$ ，$C_i ∈R^{l×n_i}$ 是第 i 个智能体的矩阵。
+ \forall i  \in  N，其中 $x_i \in R^{n_i}$，$y_i \in l$，$u_i \in m_i$ 分别是第 $i$ 个智能体的状态、输出和输入向量，$A_i \in R^{n_i×n_i}$ ，$B_i  \in R^{n_i×m_i}$ ，$C_i  \in R^{l×n_i}$ 是第 i 个智能体的矩阵。
 
 <img src="./Untitled.assets/image-20240719152645573.png" alt="image-20240719152645573" style="zoom:33%;" />
 
@@ -220,7 +220,7 @@ y = C * x_;
 
 <img src="./Untitled.assets/image-20240719153400058.png" alt="image-20240719153400058" style="zoom:33%;" />
 
-假设所需的参考输入由阶跃信号向量 $r_0$ 表示，并且仅应用于其中一个智能体，例如，具有$a_1 ≥ a_i，∀i ∈ N − {1}$的第一个智能体。为了跟踪这个所需的参考输入，引入了一组动态变量
+假设所需的参考输入由阶跃信号向量 $r_0$ 表示，并且仅应用于其中一个智能体，例如，具有$a_1 ≥ a_i， \forall i  \in  N − {1}$的第一个智能体。为了跟踪这个所需的参考输入，引入了一组动态变量
 
 $$
 \begin{align} z_{1} \left ({t+1+a_{1}}\right )=&z_{1} \left ({t+a_{1}}\right )+\hat {y}_{1} \left ({t+a_{1} | t-s_{1} }\right )-r_{0}\qquad \\ z_{i} \left ({t+1+a_{i} }\right )=&z_{i} \left ({t+a_{i}}\right )+\hat {y}_{i} \left ({t +a_{i} | t-s_{i} }\right )\notag \\&- \,\, \hat {y}_{1} \left ({t +a_{i} | t- s_{1} }\right ). \end{align}
@@ -230,7 +230,7 @@ $$
 
 <img src="./Untitled.assets/image-20240719153646287.png" alt="image-20240719153646287" style="zoom:33%;" />
 
-为了主动补偿网络延迟 $s_i$ 和 $a_i，∀i ∈ N$，NMAS 的预测控制协议如下：
+为了主动补偿网络延迟 $s_i$ 和 $a_i， \forall i  \in  N$，NMAS 的预测控制协议如下：
 
 $$
 \begin{align} \hat {u}_{i} \left ({t+a_{i} | t-s_{i} }\right )=&G_{i} z_{i} \left ({t+a_{i} }\right )\notag \\&+ \,\, H_{i} \sum _{j=1}^{N}c_{ij} \Biggl ({\hat {y}_{j} \left ({t+a_{i} | t-s_{j} }\right )}\notag \\&\qquad \qquad \qquad {- \,\, \hat {y}_{i} \left ({t+a_{i} | t-s_{i} }\right )}\Biggr )\qquad \end{align}
@@ -242,7 +242,7 @@ $$
 \begin{equation} c_{ij} =\begin{cases} {1}, & {\mathrm{ if}}~a_{i} \, \le \, a_{j}\\ {0},& {\mathrm{ if}}~a_{i} \, >a_{j}. \end{cases} \end{equation}
 $$
 
-$G_i ∈R^{m_i×m_i}$ 和 $H_i ∈R^{m_i×l_i}$ 是需要设计的增益矩阵。以上暗示预测控制协议利用基于时间 $t − s_i,∀i ∈ N$ 可用信息的输出预测来估计时间 $t + a_i,∀i ∈ N$ 的未来控制行为。实际上，所提出的预测控制协议由两部分组成。一个是让智能体 1 跟踪所需的参考，让其他智能体跟踪智能体 1 的输出，这由 (7) 中右侧的第一项表示。另一个是智能体之间的协调，由（7）中右侧的第二项表示。
+$G_i  \in R^{m_i×m_i}$ 和 $H_i  \in R^{m_i×l_i}$ 是需要设计的增益矩阵。以上暗示预测控制协议利用基于时间 $t − s_i, \forall i  \in  N$ 可用信息的输出预测来估计时间 $t + a_i, \forall i  \in  N$ 的未来控制行为。实际上，所提出的预测控制协议由两部分组成。一个是让智能体 1 跟踪所需的参考，让其他智能体跟踪智能体 1 的输出，这由 (7) 中右侧的第一项表示。另一个是智能体之间的协调，由（7）中右侧的第二项表示。
 
 <img src="./Untitled.assets/image-20240719153428805.png" alt="image-20240719153428805" style="zoom: 33%;" />
 
@@ -263,13 +263,13 @@ $$
 
 因此，云预测控制方案被提出如下。
 
-1. 来自传感器的所有智能体的输出数据 $y_i(t),∀i ∈ N$, 在每个采样时间 t 被发送到网络。 
+1. 来自传感器的所有智能体的输出数据 $y_i(t), \forall i  \in  N$, 在每个采样时间 t 被发送到网络。 
 
-2. 基于从网络接收到的输出数据 $y_i(t − s_i),∀i ∈ N$，云计算系统计算预测$\hat {x}_{i} (t+a_{i} |t-s_{i} ),~\hat {y}_{i} (t+a_{i} |t-s_{i} ),~\hat {u}_{i} (t+a_{i} |t-s_{i} ),~\forall i\in {\mathbb N},$, 分别使用（3），（4）和（7）的智能体的状态，输出和控制输入，和动态变量$z_{i}(t+a_{i})$, $∀i ∈ N$ 使用 (5) 和 (6)。 
+2. 基于从网络接收到的输出数据 $y_i(t − s_i), \forall i  \in  N$，云计算系统计算预测$\hat {x}_{i} (t+a_{i} |t-s_{i} ),~\hat {y}_{i} (t+a_{i} |t-s_{i} ),~\hat {u}_{i} (t+a_{i} |t-s_{i} ),~\forall i\in {\mathbb N},$, 分别使用（3），（4）和（7）的智能体的状态，输出和控制输入，和动态变量$z_{i}(t+a_{i})$, $ \forall i  \in  N$ 使用 (5) 和 (6)。 
 
-3. 由(9)给出的控制输入预测$u_{i} (t+a_{i}),∀i ∈ N$通过网络从云计算系统发送到每个智能体的执行器。 
+3. 由(9)给出的控制输入预测$u_{i} (t+a_{i}), \forall i  \in  N$通过网络从云计算系统发送到每个智能体的执行器。 
 
-4. 所有智能体的执行器在每个采样时间 t 从网络接收由 (10) 给出的控制输入 $u_i(t), ∀i ∈ N$。
+4. 所有智能体的执行器在每个采样时间 t 从网络接收由 (10) 给出的控制输入 $u_i(t),  \forall i  \in  N$。
 
    
 
