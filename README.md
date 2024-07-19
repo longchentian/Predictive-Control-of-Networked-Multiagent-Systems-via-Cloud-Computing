@@ -88,9 +88,11 @@ s3 = int8(1);
 ## 系统模型
 
 为了说明如何轻松地设计、分析和执行云预测控制方案，下面考虑了线性非同一多智能体。实际上，该方案可以扩展到更一般的 NMAS，例如具有不确定性和干扰的非线性 NMAS
+
 $$
 \begin{align} x_{i} (t+1)=&A_{i} x_{i} (t)+B_{i} u_{i} (t) \notag \\ y_{i} (t)=&C_{i} x_{i} (t) \end{align}
 $$
+
 ∀i ∈ N，其中 $x_i∈R^{n_i}$，$y_i∈l$，$u_i∈m_i$ 分别是第 $i$ 个智能体的状态、输出和输入向量，$A_i∈R^{n_i×n_i}$ ，$B_i ∈R^{n_i×m_i}$ ，$C_i ∈R^{l×n_i}$ 是第 i 个智能体的矩阵。
 
 <img src="./Untitled.assets/image-20240719152645573.png" alt="image-20240719152645573" style="zoom:33%;" />
@@ -98,9 +100,11 @@ $$
 ## 观测器
 
 假设所有智能体都是可观察的，但它们的状态是不可测量的。然后，基于输出 $y_i(t − s_i)$ 和控制输入 $u_i(t − s_i)$，第 i 个智能体的状态观察器设计如下：
+
 $$
 \begin{align} \hat {x}_{i} \left ({t-s_{i} +1 | t-s_{i} }\right )=&A_{i} \hat {x}_{i} \left ({t-s_{i} | t-s_{i} -1}\right )+B_{i} u_{i} \left ({t-s_{i} }\right )\notag \\&+ \,\, F_{i} \left ({y_{i} \left ({t-s_{i} }\right )-\hat {y}_{i} \left ({t-s_{i} | t-s_{i} -1}\right )}\right ) \notag \\ \hat {y}_{i} \left ({t-s_{i} | t-s_{i} -1}\right )=&C_{i} \hat {x}_{i} \left ({t-s_{i} | t-s_{i} -1}\right ) \end{align}
 $$
+
 其中 $\hat {x}_{i} (t-k|t-j)\in \Re ^{n_{i}} (k<j)$表示第 i 个智能体根据时间 $t − j$ 之前的可用信息对时间 $t − k$ 的状态预测，$\hat {y}_{i} (.|.)\in \Re ^{l_{i}}$是输出预测，$F_{i} \in \Re ^{n_{i} \times l_{i}}$是观察者增益矩阵。
 
 <img src="./Untitled.assets/image-20240719152820705.png" alt="image-20240719152820705" style="zoom:33%;" />
@@ -108,9 +112,11 @@ $$
 ## 预测过程
 
 要使用直到时间 $t − s_i$ 的可用信息来预测第 i 个智能体的状态，可以使用从 $t − s_i + 2$到$t + a_i$ 开始的以下时间状态估计：
+
 $$
 \begin{align} \hat {x}_{i} \left ({t-s_{i} +k | t-s_{i} }\right )=&A_{i} \hat {x}_{i} \left ({t-s_{i} +k-1 | t-s_{i} }\right )\notag \\&+ \,\, B_{i} u_{i} \left ({t-s_{i} +k-1}\right ) \\ \hat {y}_{i} \left ({t-s_{i} +k | t-s_{i} }\right )=&C_{i} \hat {x}_{i} \left ({t-s_{i} +k | t-s_{i} }\right ) \end{align}
 $$
+
 传感器时延部分的预测+执行器部分的预测：
 
 ![image-20240719152903104](./Untitled.assets/image-20240719152903104.png)
@@ -215,33 +221,43 @@ y = C * x_;
 <img src="./Untitled.assets/image-20240719153400058.png" alt="image-20240719153400058" style="zoom:33%;" />
 
 假设所需的参考输入由阶跃信号向量 $r_0$ 表示，并且仅应用于其中一个智能体，例如，具有$a_1 ≥ a_i，∀i ∈ N − {1}$的第一个智能体。为了跟踪这个所需的参考输入，引入了一组动态变量
+
 $$
 \begin{align} z_{1} \left ({t+1+a_{1}}\right )=&z_{1} \left ({t+a_{1}}\right )+\hat {y}_{1} \left ({t+a_{1} | t-s_{1} }\right )-r_{0}\qquad \\ z_{i} \left ({t+1+a_{i} }\right )=&z_{i} \left ({t+a_{i}}\right )+\hat {y}_{i} \left ({t +a_{i} | t-s_{i} }\right )\notag \\&- \,\, \hat {y}_{1} \left ({t +a_{i} | t- s_{1} }\right ). \end{align}
 $$
+
 (5)和(6)中动态变量的作用相当于常规控制系统中的积分作用，可以消除稳态跟踪误差。
 
 <img src="./Untitled.assets/image-20240719153646287.png" alt="image-20240719153646287" style="zoom:33%;" />
 
 为了主动补偿网络延迟 $s_i$ 和 $a_i，∀i ∈ N$，NMAS 的预测控制协议如下：
+
 $$
 \begin{align} \hat {u}_{i} \left ({t+a_{i} | t-s_{i} }\right )=&G_{i} z_{i} \left ({t+a_{i} }\right )\notag \\&+ \,\, H_{i} \sum _{j=1}^{N}c_{ij} \Biggl ({\hat {y}_{j} \left ({t+a_{i} | t-s_{j} }\right )}\notag \\&\qquad \qquad \qquad {- \,\, \hat {y}_{i} \left ({t+a_{i} | t-s_{i} }\right )}\Biggr )\qquad \end{align}
 $$
+
 其中
+
 $$
 \begin{equation} c_{ij} =\begin{cases} {1}, & {\mathrm{ if}}~a_{i} \, \le \, a_{j}\\ {0},& {\mathrm{ if}}~a_{i} \, >a_{j}. \end{cases} \end{equation}
 $$
+
 $G_i ∈R^{m_i×m_i}$ 和 $H_i ∈R^{m_i×l_i}$ 是需要设计的增益矩阵。以上暗示预测控制协议利用基于时间 $t − s_i,∀i ∈ N$ 可用信息的输出预测来估计时间 $t + a_i,∀i ∈ N$ 的未来控制行为。实际上，所提出的预测控制协议由两部分组成。一个是让智能体 1 跟踪所需的参考，让其他智能体跟踪智能体 1 的输出，这由 (7) 中右侧的第一项表示。另一个是智能体之间的协调，由（7）中右侧的第二项表示。
 
 <img src="./Untitled.assets/image-20240719153428805.png" alt="image-20240719153428805" style="zoom: 33%;" />
 
 然后，第 i 个智能体的预测控制输入被设计为
+
 $$
 \begin{equation} u_{i} \left ({t+a_{i}}\right )=\hat {u}_{i} \left ({t+a_{i} | t-s_{i}}\right ). \end{equation}
 $$
+
 因此，第 i 个智能体的控制输入为
+
 $$
 \begin{equation} u_{i} (t)=\hat {u}_{i} \left ({t | t-s_{i} -a_{i}}\right ). \end{equation}
 $$
+
 
 ![image-20240719153719858](./Untitled.assets/image-20240719153719858.png)
 
